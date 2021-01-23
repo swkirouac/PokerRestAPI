@@ -11,18 +11,24 @@ public class Game {
         this.shoe = new Shoe();
     }
 
-    public void addPlayer(String playerName) {
+    public boolean addPlayer(String playerName) {
+        if (players.contains(new Player(playerName))) {
+            return false;
+        }
         players.add(new Player(playerName));
+        return true;
     }
 
-    public void removePlayer(String playerName) {
+    public boolean removePlayer(String playerName) {
         int index = players.indexOf(new Player(playerName));
         if (index != -1) {
             Player player = players.get(players.indexOf(new Player(playerName)));
             ArrayList<Card> cards = player.getCards();
             shoe.addCardsToShoe(cards);
             players.remove(player);
+            return true;
         }
+        return false;
     }
 
     public void addDeckToShoe() {
