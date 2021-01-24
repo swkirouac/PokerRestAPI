@@ -149,6 +149,25 @@ public class PokerRestControllerTest {
     }
 
     @Test
+    public void testGetListOfCardOfAPlayer() {
+        // Given
+        restTemplate.exchange(createURLWithPort("/game/0/player/Bob"), HttpMethod.POST, null, String.class);
+        restTemplate.exchange(createURLWithPort("/game/0/player/Patrick"), HttpMethod.POST, null, String.class);
+
+        for (int i=0; i<8; i++) {
+            restTemplate.exchange(createURLWithPort("/game/0/player/Bob/dealCard"), HttpMethod.POST, null, String.class);
+            restTemplate.exchange(createURLWithPort("/game/0/player/Patrick/dealCard"), HttpMethod.POST, null, String.class);
+        }
+
+        // When
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/game/0/player/Patrick"), HttpMethod.GET, null, String.class);
+
+        // Then
+        Assertions.assertEquals("[\"2 Diamonds\",\"4 Diamonds\",\"6 Diamonds\",\"8 Diamonds\",\"10 Diamonds\",\"Queen Diamonds\",\"Ace Clubs\",\"3 Clubs\"]", response.getBody());
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
     public void testGetCountOfUndealtCardsPerSuit() {
         // Given
         restTemplate.exchange(createURLWithPort("/game/0/player/Bob"), HttpMethod.POST, null, String.class);
@@ -164,7 +183,7 @@ public class PokerRestControllerTest {
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/game/0/suitCount"), HttpMethod.GET, null, String.class);
 
         // Then
-        Assertions.assertEquals("{\"Spades\":26,\"Hearts\":26,\"Diamonds\":13,\"Clubs\":13}", response.getBody());
+        Assertions.assertEquals("{\"Hearts\":26,\"Spades\":26,\"Clubs\":13,\"Diamonds\":13}", response.getBody());
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 

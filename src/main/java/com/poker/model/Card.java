@@ -1,14 +1,23 @@
 package com.poker.model;
 
+/* Card model class
+   Used to represent any card in a card deck expect for jokers
+* */
 public class Card {
+
+    /* Private members */
+    private final Suits suit;
+    private final int rank;
+
+    /* Public members */
     public enum Suits {
         HEARTS, SPADES, CLUBS, DIAMONDS
     }
 
-    private final Suits suit;
-    private final int rank;
-
-    public Card(Suits suit, int rank) {
+    public Card(Suits suit, int rank) throws IllegalArgumentException {
+        if (rank < 1 || rank > 13) {
+            throw new IllegalArgumentException("Card value should be between 1 and 13");
+        }
         this.suit = suit;
         this.rank = rank;
     }
@@ -23,7 +32,7 @@ public class Card {
 
     public String getRankName()
     {
-        String name = "";
+        String name;
         switch(rank) {
             case 1:
                 name = "Ace";
