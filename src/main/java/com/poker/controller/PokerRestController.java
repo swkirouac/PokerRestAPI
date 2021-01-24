@@ -1,5 +1,6 @@
 package com.poker.controller;
 
+import com.poker.model.Card;
 import com.poker.model.Game;
 import com.poker.model.Player;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ import java.util.HashMap;
 public class PokerRestController {
 
     private static final int MAX_GAMES = 100;
-    private HashMap<Integer, Game> games = new HashMap<Integer, Game>();
+    private HashMap<Integer, Game> games = new HashMap<>();
 
     private int findNextAvailableGameId() {
         int result = -1;
@@ -33,41 +34,38 @@ public class PokerRestController {
         if (id != -1) {
             Game game = new Game();
             games.put(id, game);
-            return new ResponseEntity<String>(String.valueOf(id), HttpStatus.CREATED);
+            return new ResponseEntity<>(String.valueOf(id), HttpStatus.CREATED);
         }
-        return new ResponseEntity<String>("Error: Maximum number of games reached", HttpStatus.INSUFFICIENT_STORAGE);
+        return new ResponseEntity<>("Error: Maximum number of games reached", HttpStatus.INSUFFICIENT_STORAGE);
     }
 
     // Delete a game
     @DeleteMapping(path="/game/{id}")
     public ResponseEntity<String> deleteGame(@PathVariable int id) {
-
         Game game = games.get(id);
         if (game != null) {
             games.remove(id);
-            return new ResponseEntity<String>(HttpStatus.OK);
+            return new ResponseEntity<>(String.valueOf(id), HttpStatus.OK);
         }
-
-        return new ResponseEntity<String>("Error: Game does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Error: Game does not exist", HttpStatus.NOT_FOUND);
     }
 
     // See all games
     @GetMapping(path="/games")
-    public ArrayList<Integer> getGames() {
-        return new ArrayList<Integer>(games.keySet());
+    public ResponseEntity<Object> getGames() {
+        return new ResponseEntity<>(new ArrayList<>(games.keySet()), HttpStatus.OK);
     }
 
     // Add a deck to a game shoe
     @PostMapping(path="/game/{id}/addDeck")
     public ResponseEntity<String> addDeckToGame(@PathVariable int id) {
-
         Game game = games.get(id);
         if (game != null) {
             game.addDeckToShoe();
-            return new ResponseEntity<String>(HttpStatus.CREATED);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         }
 
-        return new ResponseEntity<String>("Error: Game does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Error: Game does not exist", HttpStatus.NOT_FOUND);
     }
 
     // Add player to a game
@@ -76,45 +74,40 @@ public class PokerRestController {
         Game game = games.get(id);
         if (game != null) {
             if(game.addPlayer(name)){
-                return new ResponseEntity<String>(name, HttpStatus.CREATED);
+                return new ResponseEntity<>(name, HttpStatus.CREATED);
             }
-            return new ResponseEntity<String>("Error: Player already exists", HttpStatus.METHOD_NOT_ALLOWED);
+            return new ResponseEntity<>("Error: Player already exists", HttpStatus.METHOD_NOT_ALLOWED);
         }
-        return new ResponseEntity<String>("Error: Game does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Error: Game does not exist", HttpStatus.NOT_FOUND);
     }
 
     // Remove player from a game
     @DeleteMapping(path="/game/{id}/player/{name}")
     public ResponseEntity<String> removePlayerFromGame(@PathVariable int id, @PathVariable String name) {
-
         Game game = games.get(id);
         if (game != null) {
             if(game.removePlayer(name)){
-                return new ResponseEntity<String>(name, HttpStatus.OK);
+                return new ResponseEntity<>(name, HttpStatus.OK);
             }
-            return new ResponseEntity<String>("Error: Player does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Error: Player does not exist", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<String>("Error: Game does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Error: Game does not exist", HttpStatus.NOT_FOUND);
     }
 
     // Deal card to a player
     @PostMapping(path="/game/{id}/player/{name}/dealCard")
     public ResponseEntity<String> dealCardToPlayer(@PathVariable int id, @PathVariable String name) {
-
         Game game = games.get(id);
         if (game != null) {
             if (game.getSortedListOfPlayers().contains(new Player(name))) {
-                try {
-                    game.dealCard(name);
-                    return new ResponseEntity<String>(HttpStatus.OK);
-
-                } catch (Exception e) {
-                    return new ResponseEntity<String>("Error: No more cards to deal", HttpStatus.METHOD_NOT_ALLOWED);
+                if (game.dealCard(name)) {
+                    return new ResponseEntity<>(HttpStatus.OK);
                 }
+                return new ResponseEntity<>("Error: No more cards to deal", HttpStatus.METHOD_NOT_ALLOWED);
             }
-            return new ResponseEntity<String>("Error: Player does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Error: Player does not exist", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<String>("Error: Game does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Error: Game does not exist", HttpStatus.NOT_FOUND);
     }
 
     // Get list of cards for a player
@@ -123,11 +116,16 @@ public class PokerRestController {
         Game game = games.get(id);
         if (game != null) {
             if (game.getSortedListOfPlayers().contains(new Player(name))) {
-                return new ResponseEntity<Object>(game.getListOfCardForAPlayer(name), HttpStatus.OK);
+                ArrayList<String> response =  new ArrayList<String>();
+                ArrayList<Card> cards = game.getListOfCardForAPlayer(name);
+                for (Card card : cards) {
+                    response.add(card.getRankName() + " " + card.getSuitName());
+                }
+                return new ResponseEntity<>(response, HttpStatus.OK);
             }
-            return new ResponseEntity<Object>("Error: Player does not exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Error: Player does not exist", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<Object>("Error: Game does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Error: Game does not exist", HttpStatus.NOT_FOUND);
     }
 
     // Get the list of players in descending card values order
@@ -135,9 +133,14 @@ public class PokerRestController {
     public ResponseEntity<Object> getListOfPlayers(@PathVariable int id) {
         Game game = games.get(id);
         if (game != null) {
-            return new ResponseEntity<Object>(game.getSortedListOfPlayers(), HttpStatus.OK);
+            HashMap<String, Integer> response = new HashMap<>();
+            ArrayList<Player> players = game.getSortedListOfPlayers();
+            for(Player player : players) {
+                response.put(player.getName(), player.getCardsValue());
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        return new ResponseEntity<Object>("Error: Game does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Error: Game does not exist", HttpStatus.NOT_FOUND);
     }
 
     // Get undealt cards count per suits
@@ -145,9 +148,9 @@ public class PokerRestController {
     public ResponseEntity<Object> getUndealtCardsCountPerSuit(@PathVariable int id) {
         Game game = games.get(id);
         if (game != null) {
-            return new ResponseEntity<Object>(game.getUndealtCardsBySuits(), HttpStatus.OK);
+            return new ResponseEntity<>(game.getUndealtCardsBySuits(), HttpStatus.OK);
         }
-        return new ResponseEntity<Object>("Error: Game does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Error: Game does not exist", HttpStatus.NOT_FOUND);
     }
 
     // Get undealt cards sorted per suits
@@ -155,9 +158,14 @@ public class PokerRestController {
     public ResponseEntity<Object> getUndealtCardsSortedPerSuit(@PathVariable int id) {
         Game game = games.get(id);
         if (game != null) {
-            return new ResponseEntity<Object>(game.getUndealtCardsSortedBySuits(), HttpStatus.OK);
+            ArrayList<String> response = new ArrayList<>();
+            ArrayList<Card> cards = game.getUndealtCardsSortedBySuits();
+            for (Card card : cards) {
+                response.add(card.getRankName() + " " + card.getSuitName());
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        return new ResponseEntity<Object>("Error: Game does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Error: Game does not exist", HttpStatus.NOT_FOUND);
     }
 
     // Shuffle game shoe
@@ -167,9 +175,9 @@ public class PokerRestController {
         Game game = games.get(id);
         if (game != null) {
             game.shuffleShoe();
-            return new ResponseEntity<String>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<String>("Error: Game does not exist", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Error: Game does not exist", HttpStatus.NOT_FOUND);
     }
 
 }

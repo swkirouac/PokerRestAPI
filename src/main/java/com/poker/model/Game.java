@@ -7,7 +7,7 @@ public class Game {
     private Shoe shoe;
 
     public Game() {
-        this.players = new ArrayList<Player>();
+        this.players = new ArrayList<>();
         this.shoe = new Shoe();
     }
 
@@ -39,15 +39,17 @@ public class Game {
         shoe.shuffle();
     }
 
-    public void dealCard(String playerName) {
+    public boolean dealCard(String playerName) {
         try{
             int index = players.indexOf(new Player(playerName));
             if (index != -1) {
                 Card card = shoe.dealCard();
                 players.get(index).dealCardToPlayer(card);
+                return true;
             }
+            return false;
         } catch (Exception e) {
-
+            return false;
         }
     }
 
@@ -56,30 +58,22 @@ public class Game {
         if (index != -1) {
             return players.get(index).getCards();
         }
-        return new ArrayList<Card>();
+        return null;
     }
 
     public ArrayList<Player> getSortedListOfPlayers() {
-
         // Sorted players in descending orders
-        Collections.sort(players, new Comparator<Player>() {
-            @Override
-            public int compare(Player lhs, Player rhs) {
-                // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
-                return lhs.getCardsValue() > rhs.getCardsValue() ? -1 : (lhs.getCardsValue() < rhs.getCardsValue()) ? 1 : 0;
-            }
-        });
+        players.sort((lhs, rhs) -> Integer.compare(rhs.getCardsValue(), lhs.getCardsValue()));
 
         return players;
     }
 
     public HashMap<String, Integer> getUndealtCardsBySuits() {
 
-        HashMap<String, Integer> result = new HashMap<String, Integer>();
+        HashMap<String, Integer> result = new HashMap<>();
         int diamonds = 0, hearts = 0, spades = 0, clubs = 0;
-        List<Card> cards = shoe.getRemainingCards();
-        for (int i=0; i<cards.size(); i++) {
-            switch(cards.get(i).getSuit()) {
+        for (Card card : shoe.getRemainingCards()) {
+            switch(card.getSuit()) {
                 case DIAMONDS:
                     diamonds++;
                     break;
@@ -105,22 +99,16 @@ public class Game {
 
     public ArrayList<Card> getUndealtCardsSortedBySuits() {
 
-        ArrayList<Card> cards = new ArrayList<Card>();
-        for (int i=0; i<shoe.getRemainingCards().size(); i++) {
-            cards.add(shoe.getRemainingCards().get(i));
-        }
+        ArrayList<Card> cards = new ArrayList<>(shoe.getRemainingCards());
 
         // Sorted players in descending orders
-        Collections.sort(cards, new Comparator<Card>() {
-            @Override
-            public int compare(Card lhs, Card rhs) {
-                if (lhs.getSuit().ordinal() > rhs.getSuit().ordinal())
-                    return 1;
-                else if (lhs.getSuit().ordinal() < rhs.getSuit().ordinal())
-                    return -1;
-                else
-                    return lhs.getRank() > rhs.getRank() ? -1 : (lhs.getRank() < rhs.getRank()) ? 1 : 0;
-            }
+        cards.sort((lhs, rhs) -> {
+            if (lhs.getSuit().ordinal() > rhs.getSuit().ordinal())
+                return 1;
+            else if (lhs.getSuit().ordinal() < rhs.getSuit().ordinal())
+                return -1;
+            else
+                return Integer.compare(rhs.getRank(), lhs.getRank());
         });
 
         return cards;

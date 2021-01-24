@@ -209,11 +209,11 @@ public class GameTest {
                 "Spades King, Spades 9, Spades 5, Spades Ace, " +
                 "Clubs Jack, Clubs 7, Clubs 3, " +
                 "Diamonds Queen, Diamonds 8, Diamonds 4, ";
-        String result = "";
-        for (int i=0; i< cards.size(); i++) {
-            result = result + cards.get(i).getSuitName() + " " + cards.get(i).getRankName() + ", ";
+        StringBuilder result = new StringBuilder();
+        for (Card card : cards) {
+            result.append(card.getSuitName()).append(" ").append(card.getRankName()).append(", ");
         }
         Assertions.assertEquals(13, cards.size());
-        Assertions.assertEquals(expected, result);
+        Assertions.assertEquals(expected, result.toString());
     }
 }
