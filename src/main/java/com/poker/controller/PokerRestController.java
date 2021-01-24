@@ -11,11 +11,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+/* PokerRestController class
+*  This class is responsible to handle all HTTP requests
+*  for the poker games
+* */
 @RestController
 @RequestMapping(path="/")
 public class PokerRestController {
 
-    public static final int MAX_GAMES = 100;
+    /* Private members */
     private HashMap<Integer, Game> games = new HashMap<>();
 
     private int findNextAvailableGameId() {
@@ -27,6 +31,9 @@ public class PokerRestController {
         }
         return result;
     }
+
+    /* Public members */
+    public static final int MAX_GAMES = 100;
 
     // Create a new game
     @PostMapping(path="/games")

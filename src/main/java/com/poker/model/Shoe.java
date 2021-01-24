@@ -41,9 +41,9 @@ public class Shoe {
     /* This function remove a card from the shoe.
        It should be added in the player list.
      */
-    public Card dealCard() throws Exception {
+    public Card dealCard() throws IndexOutOfBoundsException {
         if (cards.size() == 0)
-            throw new Exception("No more cards to deal");
+            throw new IndexOutOfBoundsException("No more cards to deal");
 
         Card card = cards.get(0);
         cards.remove(0);

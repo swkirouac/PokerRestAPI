@@ -28,7 +28,7 @@ public class ShoeTest {
     }
 
     @Test
-    void testDeal1Card() throws Exception {
+    void testDeal1Card() throws IndexOutOfBoundsException {
         // Given
         Shoe shoe = new Shoe();
 
@@ -41,16 +41,15 @@ public class ShoeTest {
     }
 
     @Test
-    void testDeal53Card() throws Exception {
+    void testDeal53Card() throws IndexOutOfBoundsException {
         // Given
         Shoe shoe = new Shoe();
 
         // When
-        Card card;
         for (int i = 0; i < 52; i++) {
-            card = shoe.dealCard();
+            shoe.dealCard();
         }
-        Exception e = assertThrows(Exception.class, shoe::dealCard);
+        Exception e = assertThrows(IndexOutOfBoundsException.class, shoe::dealCard);
 
         // Then
         Assertions.assertEquals(0, shoe.getRemainingCards().size());
@@ -95,7 +94,7 @@ public class ShoeTest {
     }
 
     @Test
-    void testDealAndAddCards() throws Exception {
+    void testDealAndAddCards() throws IndexOutOfBoundsException {
         // Given
         Shoe shoe = new Shoe();
 

@@ -183,7 +183,7 @@ public class PokerRestControllerTest {
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/game/0/suitCount"), HttpMethod.GET, null, String.class);
 
         // Then
-        Assertions.assertEquals("{\"Spades\":26,\"Hearts\":26,\"Diamonds\":13,\"Clubs\":13}", response.getBody());
+        Assertions.assertEquals("{\"Hearts\":26,\"Spades\":26,\"Clubs\":13,\"Diamonds\":13}", response.getBody());
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
