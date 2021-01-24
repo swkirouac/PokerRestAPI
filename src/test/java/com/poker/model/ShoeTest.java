@@ -62,8 +62,6 @@ public class ShoeTest {
         Shoe shoe1 = new Shoe();
         Shoe shoe2 = new Shoe();
 
-        // When ... nothing
-
         // Then
         StringBuilder shoe1String = new StringBuilder();
         StringBuilder shoe2String = new StringBuilder();

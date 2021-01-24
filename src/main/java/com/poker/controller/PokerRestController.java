@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 public class PokerRestController {
 
     /* Private members */
-    private HashMap<Integer, Game> games = new HashMap<>();
+    private final HashMap<Integer, Game> games = new HashMap<>();
 
     private int findNextAvailableGameId() {
         int result = -1;

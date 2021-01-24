@@ -32,7 +32,7 @@ public class Card {
 
     public String getRankName()
     {
-        String name = "";
+        String name;
         switch(rank) {
             case 1:
                 name = "Ace";
