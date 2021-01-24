@@ -3,12 +3,12 @@ package com.poker.model;
 import java.util.ArrayList;
 
 public class Player {
-    private String name;
-    private ArrayList<Card> cards;
+    private final String name;
+    private final ArrayList<Card> cards;
 
     public Player(String name) {
         this.name = name;
-        cards = new ArrayList<Card>();
+        cards = new ArrayList<>();
     }
 
     public String getName() {
@@ -21,8 +21,8 @@ public class Player {
 
     public int getCardsValue() {
         int totalCardsValue = 0;
-        for (int i=0; i<cards.size(); i++) {
-            totalCardsValue += cards.get(i).getRank();
+        for (Card card : cards) {
+            totalCardsValue += card.getRank();
         }
         return totalCardsValue;
     }
@@ -35,9 +35,7 @@ public class Player {
     public boolean equals(Object obj) {
         if(obj instanceof Player){
             Player element = (Player) obj;
-            if(element != null && this.name.equals(element.name)){
-                return true;
-            }
+            return this.name.equals(element.name);
         }
         return false;
     }

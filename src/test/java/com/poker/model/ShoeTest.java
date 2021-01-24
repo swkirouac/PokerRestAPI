@@ -37,7 +37,7 @@ public class ShoeTest {
 
         // Then
         Assertions.assertEquals(51, shoe.getRemainingCards().size());
-        Assertions.assertEquals(false, shoe.getRemainingCards().contains(card));
+        Assertions.assertFalse(shoe.getRemainingCards().contains(card));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class ShoeTest {
         for (int i = 0; i < 52; i++) {
             card = shoe.dealCard();
         }
-        Exception e = assertThrows(Exception.class, () -> shoe.dealCard());
+        Exception e = assertThrows(Exception.class, shoe::dealCard);
 
         // Then
         Assertions.assertEquals(0, shoe.getRemainingCards().size());
@@ -66,13 +66,13 @@ public class ShoeTest {
         // When ... nothing
 
         // Then
-        String shoe1String = "";
-        String shoe2String = "";
+        StringBuilder shoe1String = new StringBuilder();
+        StringBuilder shoe2String = new StringBuilder();
         for (int i = 0; i < shoe1.getRemainingCards().size(); i++) {
-            shoe1String = shoe1String + " " + shoe1.getRemainingCards().get(i).getRankName();
-            shoe2String = shoe2String + " " + shoe2.getRemainingCards().get(i).getRankName();
+            shoe1String.append(" ").append(shoe1.getRemainingCards().get(i).getRankName());
+            shoe2String.append(" ").append(shoe2.getRemainingCards().get(i).getRankName());
         }
-        Assertions.assertEquals(shoe1String, shoe2String);
+        Assertions.assertEquals(shoe1String.toString(), shoe2String.toString());
     }
 
     @Test
@@ -85,13 +85,13 @@ public class ShoeTest {
         shoe1.shuffle();
 
         // Then
-        String shoe1String = "";
-        String shoe2String = "";
+        StringBuilder shoe1String = new StringBuilder();
+        StringBuilder shoe2String = new StringBuilder();
         for (int i = 0; i < shoe1.getRemainingCards().size(); i++) {
-            shoe1String = shoe1String + " " + shoe1.getRemainingCards().get(i).getRankName();
-            shoe2String = shoe2String + " " + shoe2.getRemainingCards().get(i).getRankName();
+            shoe1String.append(" ").append(shoe1.getRemainingCards().get(i).getRankName());
+            shoe2String.append(" ").append(shoe2.getRemainingCards().get(i).getRankName());
         }
-        Assertions.assertNotEquals(shoe1String, shoe2String);
+        Assertions.assertNotEquals(shoe1String.toString(), shoe2String.toString());
     }
 
     @Test
@@ -101,12 +101,12 @@ public class ShoeTest {
 
         // When
         Card card = shoe.dealCard();
-        ArrayList<Card> cards = new ArrayList<Card>();
+        ArrayList<Card> cards = new ArrayList<>();
         cards.add(card);
         shoe.addCardsToShoe(cards);
 
         // Then
         Assertions.assertEquals(52, shoe.getRemainingCards().size());
-        Assertions.assertEquals(true, shoe.getRemainingCards().contains(card));
+        Assertions.assertTrue(shoe.getRemainingCards().contains(card));
     }
 }

@@ -1,18 +1,21 @@
 package com.poker.model;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class PlayerTest {
 
-    private String playerName = "X Æ A-12";;
+    private final String playerName = "X Æ A-12";;
+    private Player player;
+
+    @BeforeEach
+    void initTest() {
+        player = new Player(playerName);
+    }
 
     @Test
     void testPlayerCreation() {
-        // Given
-        Player player = new Player(playerName);
-
-        // Then
         Assertions.assertEquals(playerName, player.getName());
         Assertions.assertEquals(0, player.getCardsValue());
         Assertions.assertEquals(0, player.getCards().size());
@@ -20,9 +23,6 @@ public class PlayerTest {
 
     @Test
     void testDealCard() {
-        // Given
-        Player player = new Player(playerName);
-
         // When
         player.dealCardToPlayer(new Card(Card.Suits.DIAMONDS, 2));
         player.dealCardToPlayer(new Card(Card.Suits.HEARTS, 8));

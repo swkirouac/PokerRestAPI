@@ -1,9 +1,6 @@
 package com.poker.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
 
 public class Shoe {
     private ArrayList<Card> cards;
@@ -24,18 +21,8 @@ public class Shoe {
         }
     }
 
-    private static int getRandomNumberInRange(int min, int max) {
-
-        if (min >= max) {
-            throw new IllegalArgumentException("max must be greater than min");
-        }
-
-        Random r = new Random();
-        return r.nextInt((max - min) + 1) + min;
-    }
-
     public Shoe() {
-        cards = new ArrayList<Card>();
+        cards = new ArrayList<>();
         Create1Deck();
     }
 
