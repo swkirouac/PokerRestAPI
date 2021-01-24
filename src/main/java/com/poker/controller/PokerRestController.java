@@ -9,12 +9,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 @RestController
 @RequestMapping(path="/")
 public class PokerRestController {
 
-    private static final int MAX_GAMES = 100;
+    public static final int MAX_GAMES = 100;
     private HashMap<Integer, Game> games = new HashMap<>();
 
     private int findNextAvailableGameId() {
@@ -133,7 +134,7 @@ public class PokerRestController {
     public ResponseEntity<Object> getListOfPlayers(@PathVariable int id) {
         Game game = games.get(id);
         if (game != null) {
-            HashMap<String, Integer> response = new HashMap<>();
+            LinkedHashMap<String, Integer> response = new LinkedHashMap<>();
             ArrayList<Player> players = game.getSortedListOfPlayers();
             for(Player player : players) {
                 response.put(player.getName(), player.getCardsValue());
